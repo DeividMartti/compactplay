@@ -188,9 +188,9 @@ footer ul{list-style:none;padding:0;display:grid;gap:10px}footer a{color:#94A3B8
 
 /* Correção comparador */
 .cover{transform:scale(1.01)}
-.cover:not(.orig){filter:blur(.8px) contrast(.97) saturate(.96)}
+.cover:not(.orig){filter:blur(.2px)}
 .cmp:not(.ok) .ctl{visibility:hidden}
-.cmp.miss video{visibility:hidden}
+.cmp.miss video:not(.demo){visibility:hidden}
 .tag.l{top:auto;bottom:12px;left:12px}.cmp.ok .tag.l{bottom:64px}
 .ill{position:absolute;right:12px;bottom:12px;z-index:3;font-size:11px;color:rgba(255,255,255,.9);background:rgba(15,23,42,.55);padding:4px 9px;border-radius:6px}
 .cmp.ok .ill{display:none}
@@ -203,6 +203,10 @@ footer ul{list-style:none;padding:0;display:grid;gap:10px}footer a{color:#94A3B8
 .kpi div{background:#fff;border:1px solid #E2E8F0;border-radius:12px}
 .kn{text-align:center;font-size:12px;color:#64748B;margin-top:10px}
 @media(max-width:820px){.notes{flex-direction:column;gap:6px}.nt{max-width:100%;font-size:20px}.nt.r{flex-direction:row-reverse;text-align:left}.nt.r svg{transform:none!important}}
+.stage video.cover{object-fit:cover}
+/* Menu fixo */
+header{position:sticky;top:0;z-index:50}
+html{scroll-padding-top:64px}
 </style>
 </head>
 <body>
@@ -243,9 +247,9 @@ footer ul{list-style:none;padding:0;display:grid;gap:10px}footer a{color:#94A3B8
 <section class="sec alt" id="como-funciona"><div class="ct"><div class="hd"><div class="eb">Simples, rápido e prático</div><h2>Compacte seus vídeos em três passos</h2><p class="sub2">Tudo o que você precisa está aqui. Sem instalações, sem configurações complicadas.</p></div><div class="steps" id="st3"></div><div class="cta1"><button class="btn b1 lg" data-go>Compactar meus vídeos</button></div></div></section>
 <section class="sec" id="comparacao"><div class="ct"><div class="hd"><div class="eb">Menos tamanho, mais eficiência</div><h2>Você consegue notar a diferença?</h2><p class="sub2">Compare um vídeo original com sua versão compactada e descubra como é possível reduzir o tamanho do arquivo preservando a qualidade visual.</p></div>
 <div class="cmp" id="cmp"><div class="stage">
-<img class="cover" src="images/paisagem%20cinematogr%C3%A1fica.png" alt="Paisagem cinematográfica, comparação ilustrativa" loading="lazy" onerror="this.remove()">
+<video class="cover demo" autoplay muted loop playsinline disablepictureinpicture preload="auto" poster="images/paisagem%20cinematogr%C3%A1fica.png" aria-label="Vídeo de demonstração do comparador" tabindex="-1"><source src="videos/beija-flor%20beijando%20as%20flores%20em%20loopin.mp4" type="video/mp4"><source src="videos/beija-flor%20beijando%20as%20flores%20em%20loopin.webm" type="video/webm"><source src="videos/beija-flor%20beijando%20as%20flores%20em%20loopin.mov"></video>
 <video class="vc" muted playsinline preload="none"></video>
-<div class="clip"><img class="cover orig" src="images/paisagem%20cinematogr%C3%A1fica.png" alt="" loading="lazy" onerror="this.remove()"><video class="vo" muted playsinline preload="none"></video></div>
+<div class="clip"><video class="cover demo orig" autoplay muted loop playsinline disablepictureinpicture preload="auto" poster="images/paisagem%20cinematogr%C3%A1fica.png" aria-label="Vídeo de demonstração do comparador" tabindex="-1"><source src="videos/beija-flor%20beijando%20as%20flores%20em%20loopin.mp4" type="video/mp4"><source src="videos/beija-flor%20beijando%20as%20flores%20em%20loopin.webm" type="video/webm"><source src="videos/beija-flor%20beijando%20as%20flores%20em%20loopin.mov"></video><video class="vo" muted playsinline preload="none"></video></div>
 <span class="tag l">ORIGINAL</span><span class="tag r">COMPACT PLAY</span><span class="ill">Demonstração ilustrativa</span>
 <div class="dv" role="slider" tabindex="0" aria-label="Divisor de comparação" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"><i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 7-5 5 5 5M15 7l5 5-5 5"/></svg></i></div>
 <div class="ctl"><button type="button" id="cpl" aria-label="Reproduzir"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 4v16l14-8z" fill="currentColor"/></svg></button><input type="range" id="cseek" min="0" max="1000" value="0" step="1" aria-label="Barra de reprodução"><button type="button" id="cmu" aria-label="Ativar áudio"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/></svg></button></div>
@@ -447,7 +451,7 @@ function VideoComparisonSlider(){
  const size=u=>fetch(u,{method:'HEAD'}).then(r=>{const n=r.ok?+r.headers.get('content-length'):NaN;if(n>0)return n;throw 0}).catch(()=>fetch(u,{headers:{Range:'bytes=0-0'}}).then(r=>{const m=(r.headers.get('content-range')||'').match(/\/(\d+)$/);return m?+m[1]:(r.ok?+r.headers.get('content-length'):NaN)}).catch(()=>NaN));
  const mb=n=>(n/1e6).toFixed(1).replace('.',',')+' MB';
  function load(){if(loaded)return;loaded=true;
-  [vo,vc].forEach(v=>{v.addEventListener('loadedmetadata',()=>{if(++ready===2)root.classList.add('ok')});v.addEventListener('error',()=>root.classList.add('miss'))});
+  [vo,vc].forEach(v=>{v.addEventListener('loadedmetadata',()=>{if(++ready===2){root.classList.add('ok');document.querySelectorAll('#cmp video.demo').forEach(v=>v.pause())}});v.addEventListener('error',()=>root.classList.add('miss'))});
   vo.src=O;vc.src=C;vo.load();vc.load();
   Promise.all([size(O),size(C)]).then(([a,b])=>{if(a>0&&b>0){$('#k1').textContent=mb(a);$('#k2').textContent=mb(b);$('#k3').textContent=Math.max(0,(a-b)/a*100).toFixed(1).replace('.',',').replace(',0','')+'%';$('#k3s').textContent='Espaço economizado: '+mb(Math.max(0,a-b));$('#kn').hidden=true}})}
  new IntersectionObserver((en,ob)=>{if(en[0].isIntersecting){load();ob.disconnect()}},{rootMargin:'200px'}).observe(root);
@@ -460,7 +464,13 @@ function VideoComparisonSlider(){
  vo.addEventListener('ended',()=>{vc.pause();pl.innerHTML=svg('play',18)});
  $('#cmu').onclick=e=>{vc.muted=!vc.muted;e.currentTarget.innerHTML=svg(vc.muted?'mute':'vol',18);e.currentTarget.setAttribute('aria-label',vc.muted?'Ativar áudio':'Desativar áudio')};
 }
-BenefitsSection();HowItWorksSection();CTABanner();FAQSection();VideoComparisonSlider();
+function DemoLoop(){
+ const [a,b]=document.querySelectorAll('#cmp video.demo');if(!a||!b)return;
+ let n=0;const go=()=>{if(++n===2){a.currentTime=0;b.currentTime=0;a.play().catch(()=>{});b.play().catch(()=>{})}};
+ [a,b].forEach(v=>{v.muted=true;v.addEventListener('canplay',go,{once:true})});
+ setInterval(()=>{if(!a.paused&&Math.abs(a.currentTime-b.currentTime)>.1)b.currentTime=a.currentTime},300);
+}
+BenefitsSection();HowItWorksSection();CTABanner();FAQSection();VideoComparisonSlider();DemoLoop();
 $('#yr').textContent=new Date().getFullYear();
 </script>
 </body>
